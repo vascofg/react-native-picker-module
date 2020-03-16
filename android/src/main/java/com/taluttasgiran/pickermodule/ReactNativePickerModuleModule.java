@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Callback;
@@ -19,7 +20,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 public class ReactNativePickerModuleModule extends ReactContextBaseJavaModule {
-    private final ReactApplicationContext reactContext;
+    private final ReactContext reactContext;
     private RNSpinner rnSpinner;
 
     public ReactNativePickerModuleModule(ReactApplicationContext reactContext) {
@@ -28,7 +29,8 @@ public class ReactNativePickerModuleModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void show(ReadableArray items, ReadableArray images, int selectedItem, String placeholder, final Callback onClickCallback, final Callback onCancelCallback) {
+    public void show(ReadableArray items, ReadableArray images, int selectedItem, String placeholder,
+            Boolean showDeleteButton, final Callback onClickCallback, final Callback onCancelCallback) {
         final String[] imageURIList = new String[images.size()];
         for (int i = 0; i < images.size(); i++) {
             if (images.getType(i) == ReadableType.Map) {
@@ -52,7 +54,8 @@ public class ReactNativePickerModuleModule extends ReactContextBaseJavaModule {
             }
 
         }
-        rnSpinner = new RNSpinner(getCurrentActivity(), labels, selectedItem == -1 ? 0 : selectedItem, imageURIList, placeholder, onClickCallback, onCancelCallback);
+        rnSpinner = new RNSpinner(getCurrentActivity(), reactContext, labels, selectedItem == -1 ? 0 : selectedItem,
+                imageURIList, placeholder, showDeleteButton, onClickCallback, onCancelCallback);
         rnSpinner.show();
     }
 
