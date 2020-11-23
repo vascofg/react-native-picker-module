@@ -32,7 +32,7 @@ public class ReactNativePickerModuleModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void hide() {
-        if (rnSpinner == null) {
+        if (rnSpinner != null) {
             rnSpinner.hide();
         }
     }
