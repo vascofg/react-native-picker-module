@@ -4,6 +4,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +20,8 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.ReadableType;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -28,12 +31,12 @@ import java.net.URLConnection;
 
 public class RNSpinnerAdapter extends RecyclerView.Adapter<RNSpinnerAdapter.MyViewHolder> {
     ReactContext reactContext;
-    private String[] mDataset;
+    private ReadableArray mDataset;
     RNSpinner rnSpinner;
     Callback callback;
     Boolean showDeleteButton;
-    int selectedItemPosition;
-    private String[] imageList;
+    String selectedValue;
+    ReadableArray selectedColor;
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
         LinearLayout linearLayout;
@@ -44,39 +47,22 @@ public class RNSpinnerAdapter extends RecyclerView.Adapter<RNSpinnerAdapter.MyVi
         }
     }
 
-    RNSpinnerAdapter(ReactContext reactContext, String[] myDataset, RNSpinner androidSpinner, Boolean showDeleteButton,
-            Callback spinnerCallback, int selectedItem, String[] images) {
+    RNSpinnerAdapter(ReactContext reactContext, ReadableArray myDataset, RNSpinner androidSpinner, Boolean showDeleteButton, Callback spinnerCallback, String mSelectedValue, ReadableArray mSelectedColor) {
         this.reactContext = reactContext;
         mDataset = myDataset;
         rnSpinner = androidSpinner;
         callback = spinnerCallback;
         this.showDeleteButton = showDeleteButton;
-        selectedItemPosition = selectedItem;
-        imageList = images;
+        selectedValue = mSelectedValue;
+        selectedColor = mSelectedColor;
     }
 
     @Override
-    public RNSpinnerAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RNSpinnerAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent,
+                                                            int viewType) {
         LinearLayout linearLayout = (LinearLayout) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.spinner_item, parent, false);
         return new MyViewHolder(linearLayout);
-    }
-
-    private Bitmap getImageBitmap(String url) {
-        Bitmap bm = null;
-        try {
-            URL aURL = new URL(url);
-            URLConnection conn = aURL.openConnection();
-            conn.connect();
-            InputStream is = conn.getInputStream();
-            BufferedInputStream bis = new BufferedInputStream(is);
-            bm = BitmapFactory.decodeStream(bis);
-            bis.close();
-            is.close();
-        } catch (IOException e) {
-            Log.e("RNPickerModule", "Error getting bitmap", e);
-        }
-        return bm;
     }
 
     private void sendEvent(ReactContext reactContext, String eventName, WritableMap params) {
@@ -85,21 +71,59 @@ public class RNSpinnerAdapter extends RecyclerView.Adapter<RNSpinnerAdapter.MyVi
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
+        String value = null;
+        String text = null;
         Button button = holder.linearLayout.findViewById(R.id.button);
         ImageButton deleteButton = holder.linearLayout.findViewById(R.id.deleteButton);
-        ImageView imageView = holder.linearLayout.findViewById(R.id.item_image);
-        if (this.imageList.length > 0) {
-            button.setPadding(15, 15, 15, 15);
-            imageView.setImageBitmap(getImageBitmap(this.imageList[position]));
-        } else {
-            imageView.setVisibility(View.GONE);
+        if (mDataset.getType(position) == ReadableType.Map) {
+            if (mDataset.getMap(position).getType("value") == ReadableType.String) {
+                value = mDataset.getMap(position).getString("value");
+            } else {
+                double number = mDataset.getMap(position).getDouble("value");
+                if (number == Math.rint(number)) {
+                    value = String.valueOf((int) number);
+                } else {
+                    value = String.valueOf(number);
+                }
+            }
+            if (mDataset.getMap(position).getType("label") == ReadableType.String) {
+                text = mDataset.getMap(position).getString("label");
+            } else {
+                double number = mDataset.getMap(position).getDouble("label");
+                if (number == Math.rint(number)) {
+                    text = String.valueOf((int) number);
+                } else {
+                    text = String.valueOf(number);
+                }
+            }
+        } else if (mDataset.getType(position) == ReadableType.String) {
+            text = mDataset.getString(position);
+            value = mDataset.getString(position);
+        } else if (mDataset.getType(position) == ReadableType.Number) {
+            double number = mDataset.getDouble(position);
+            if (number == Math.rint(number)) {
+                text = String.valueOf((int) number);
+                value = String.valueOf((int) number);
+            } else {
+                text = String.valueOf(number);
+                value = String.valueOf(number);
+            }
         }
-        button.setText(mDataset[position]);
+        button.setText(text);
+        final String finalValue = value;
+        if (selectedValue != null) {
+            if (selectedValue.equals(value)) {
+                button.setEnabled(false);
+                if (selectedColor != null) {
+                    button.setTextColor(Color.rgb(selectedColor.getInt(0), selectedColor.getInt(1), selectedColor.getInt(2)));
+                }
+            }
+        }
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 rnSpinner.hide();
-                callback.invoke(mDataset[position], position);
+                callback.invoke(finalValue);
             }
         });
         if (this.showDeleteButton == true) {
@@ -107,8 +131,7 @@ public class RNSpinnerAdapter extends RecyclerView.Adapter<RNSpinnerAdapter.MyVi
                 @Override
                 public void onClick(View v) {
                     WritableMap params = Arguments.createMap();
-                    params.putString("item", mDataset[position]);
-                    params.putInt("position", position);
+                    params.putString("value", finalValue);
                     sendEvent(RNSpinnerAdapter.this.reactContext, "ItemDeleted", params);
                 }
             });
@@ -119,6 +142,8 @@ public class RNSpinnerAdapter extends RecyclerView.Adapter<RNSpinnerAdapter.MyVi
 
     @Override
     public int getItemCount() {
-        return mDataset.length;
+        return mDataset.size();
     }
 }
+
+

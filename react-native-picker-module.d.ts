@@ -3,26 +3,34 @@
 // Definitions by: Talut TASGIRAN <https://github.com/talut>
 // TypeScript Version: 3.8.2
 
-import React from "react";
+import React from "react"
 
 export interface ReactNativePickerModuleProps {
-  value?: number;
-  items: string[];
-  images?: any[];
-  title?: string;
-  ios?: object;
-  pickerRef: (e: ReactNativePickerModule) => void;
-  onValueChange: (valueText: string, index: number) => void;
-  onDelete?: (valueText: string, index: number) => void;
-  onCancel?: () => void;
-  onDismiss?: () => void;
-  cancelButton?: string;
-  confirmButton?: string;
+  value?: string
+  items: string[]
+  title?: string
+  pickerRef: any[]
+  onValueChange: (value: string) => void
+  onCancel?: () => void
+  onDelete?: (value:string) => void
+  cancelButton?: string
+  confirmButton?: string
   deleteButton?: string;
+  contentContainerStyle?: object
+  confirmButtonStyle?: object
+  cancelButtonStyle?: object
+  titleStyle?: object
+  itemStyle?: object
+  useNativeDriver?: boolean
+  confirmButtonDisabledTextStyle?: object
+  confirmButtonEnabledTextStyle?: object
+  cancelButtonTextStyle?: object
+  backdropColor?: string
+  backdropOpacity?: number
+  selectedColor?: string
 }
 
-export default class ReactNativePickerModule extends React.Component<
-  ReactNativePickerModuleProps
-> {
-  show: () => void;
+export default class ReactNativePickerModule extends React.Component<ReactNativePickerModuleProps> {
+  show: () => void
+  hide: () => void
 }
