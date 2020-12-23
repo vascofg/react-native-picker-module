@@ -2,7 +2,7 @@
 
 With this package you can easily use picker with onPress function.
 
-Using `react-native-modal` and `@react-native-community/picker` component for IOS and using `RecyclerView` and `AlertDialog` for Android as `NativeModule`.
+Using `react-native-modal` and `@react-native-picker/picker` component for IOS and using `RecyclerView` and `AlertDialog` for Android as `NativeModule`.
 
 
 <img src="./docs/android-picker-module.png" width="200"> <img width="200" src="./docs/ios-picker-module.png">
