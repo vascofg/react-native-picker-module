@@ -1,8 +1,10 @@
-# React Native Picker Module for Android & IOS
+# React Native Picker Module with delete button for Android & IOS
 
 With this package you can easily use picker with onPress function.
 
 Using `react-native-modal` and `@react-native-picker/picker` component for IOS and using `RecyclerView` and `AlertDialog` for Android as `NativeModule`.
+
+Note: this fork contains the delete button functionality
 
 
 <img src="./docs/android-picker-module.png" width="200"> <img width="200" src="./docs/ios-picker-module.png">
@@ -36,7 +38,7 @@ Using `react-native-modal` and `@react-native-picker/picker` component for IOS a
 **With YARN**
 
 ```
-yarn add react-native-picker-module && yarn add react-native-modal && yarn add @react-native-community/picker
+yarn add react-native-picker-delete-module && yarn add react-native-modal && yarn add @react-native-community/picker
 ```
 
 #### After React Native v0.60.0
@@ -49,7 +51,7 @@ cd ios && pod install
 **Automatic linking**
 
 ```
-react-native link react-native-picker-module
+react-native link react-native-picker-delete-module
 ```
 
 **Manual Linking**
@@ -86,7 +88,7 @@ react-native link react-native-picker-module
 ```javascript
 import React, { useRef, useState } from "react"
 import { Button, SafeAreaView, Text } from "react-native"
-import ReactNativePickerModule from "react-native-picker-module"
+import ReactNativePickerModule from "react-native-picker-delete-module"
 
 const App = () => {
   const pickerRef = useRef()
@@ -170,7 +172,7 @@ export default App
 ```javascript
 import React from "react"
 import { SafeAreaView, Text, Button } from "react-native"
-import ReactNativePickerModule from "react-native-picker-module"
+import ReactNativePickerModule from "react-native-picker-delete-module"
 
 const dataset = [
   {
