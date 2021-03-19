@@ -1,2 +1,2 @@
-import ReactNativePickerModule from './lib';
-export default ReactNativePickerModule
+import ReactNativePickerModule from "./lib";
+export default ReactNativePickerModule;

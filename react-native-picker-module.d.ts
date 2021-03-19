@@ -1,24 +1,36 @@
-// Type definitions for react-native-picker-module 1.0.0
+// Type definitions for react-native-picker-module 1.3.1
 // Project: https://github.com/talut/react-native-picker-module
 // Definitions by: Talut TASGIRAN <https://github.com/talut>
-// TypeScript Version: 2.8
-declare module "react-native-picker-module" {
-    import React from 'react';
+// TypeScript Version: 3.8.2
 
-    interface ReactNativePickerModuleProps {
-        value?: number,
-        items: [],
-        images?: [],
-        title?: string,
-        ios?: object,
-        pickerRef: () => {},
-        onValueChange: () => {},
-        onCancel?: () => {},
-        onDismiss?: () => {},
-        cancelButton?: string,
-        confirmButton?: string,
-    }
+import React from "react"
 
-    const ReactNativePickerModule: (props: ReactNativePickerModuleProps) => React.Component<ReactNativePickerModuleProps>;
-    export default ReactNativePickerModule;
+export interface ReactNativePickerModuleProps {
+  value?: string
+  items: string[]
+  title?: string
+  pickerRef: React.RefObject<any>
+  onValueChange: (value: string) => void
+  onCancel?: () => void
+  onDelete?: (value:string) => void
+  cancelButton?: string
+  confirmButton?: string
+  deleteButton?: string;
+  contentContainerStyle?: object
+  confirmButtonStyle?: object
+  cancelButtonStyle?: object
+  titleStyle?: object
+  itemStyle?: object
+  useNativeDriver?: boolean
+  confirmButtonDisabledTextStyle?: object
+  confirmButtonEnabledTextStyle?: object
+  cancelButtonTextStyle?: object
+  backdropColor?: string
+  backdropOpacity?: number
+  selectedColor?: string
+}
+
+export default class ReactNativePickerModule extends React.Component<ReactNativePickerModuleProps> {
+  show: () => void
+  hide: () => void
 }
